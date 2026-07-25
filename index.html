@@ -99,7 +99,7 @@ footer .brand{font-size:16px}
       <h1>On fouille le marché.<br>Vous gardez <em>les pépites.</em></h1>
       <p class="hero-sub">Dénich'Deals repère les meilleurs produits au meilleur prix et vous les livre directement, sans jamais fouiller vous-même.</p>
       <div class="cta-row">
-        <button class="btn-primary">Voir la trouvaille du moment</button>
+        <button class="btn-primary" onclick="acheter()">Voir la trouvaille du moment</button>
         <button class="btn-secondary">Comment ça marche</button>
       </div>
     </div>
@@ -154,7 +154,7 @@ footer .brand{font-size:16px}
       <div class="drop-badge">−50% cette semaine</div>
       <h3>Autonomie 30h, réduction de bruit active</h3>
       <p>La sélection qui ouvre Dénich'Deals : un son clair, un boîtier compact, et un prix qu'on ne trouve pas ailleurs sur ce modèle.</p>
-      <button class="btn-primary">Je le veux</button>
+      <button class="btn-primary" onclick="acheter()">Je le veux</button>
     </div>
     <div class="drop-visual">🎧</div>
   </div>
@@ -166,5 +166,23 @@ footer .brand{font-size:16px}
   <div><a href="/legal.html" style="color:var(--grey);text-decoration:none;font-size:12px">Mentions légales · CGV · Confidentialité</a></div>
 </footer>
 
+<script>
+function acheter() {
+  fetch('https://n8n.wtng.online/webhook/denich-create-payment', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      product_name: "Écouteurs sans fil",
+      amount: "29.00",
+      customer_name: null,
+      phone: null,
+      email: null
+    })
+  })
+  .then(r => r.json())
+  .then(data => { window.location.href = data.checkout_url; })
+  .catch(() => alert('Une erreur est survenue, veuillez réessayer.'));
+}
+</script>
 </body>
 </html>
