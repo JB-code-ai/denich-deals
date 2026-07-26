@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finaliser ma livraison — Dénich'Deals</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#221527; --bg2:#2C1B33; --gold:#E8A63D; --coral:#FF6B52;
+  --cream:#F5F0EA; --grey:#B8A9C0; --line:rgba(245,240,234,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--cream);min-height:100vh;display:flex;flex-direction:column}
+h1,.brand{font-family:'Fredoka',sans-serif}
+nav{padding:20px 6%;border-bottom:1px solid var(--line)}
+.brand{font-size:20px;font-weight:700}
+.brand span{color:var(--gold)}
+.wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:50px 6%}
+.card{max-width:480px;width:100%}
+h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.subtitle{color:var(--grey);font-size:14px;margin-bottom:32px}
+label{display:block;font-size:13px;color:var(--grey);margin-bottom:6px;margin-top:16px}
+input{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:13px 14px;color:var(--cream);font-size:15px;font-family:'Karla',sans-serif}
+input:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:12px}
+.row > div{flex:1}
+button{width:100%;margin-top:28px;background:var(--gold);color:var(--bg);border:none;padding:15px;border-radius:12px;font-weight:700;font-size:15px;font-family:'Fredoka',sans-serif;cursor:pointer}
+button:hover{transform:translateY(-1px)}
+.success{display:none;text-align:center;padding:40px 0}
+.success h2{color:var(--gold);margin-bottom:12px}
+.success p{color:var(--grey);font-size:14px}
+.error-msg{color:var(--coral);font-size:13px;margin-top:12px;display:none}
+</style>
+</head>
+<body>
+
+<nav><div class="brand">Dénich'<span>Deals</span></div></nav>
+
+<div class="wrap">
+  <div class="card" id="form-card">
+    <h1>Finalisons votre livraison</h1>
+    <p class="subtitle">Commande <strong id="ref-display">—</strong> — indiquez où vous envoyer votre colis.</p>
+
+    <form id="livraison-form">
+      <label>Nom et prénom</label>
+      <input type="text" id="customer_name" required>
+
+      <label>Adresse</label>
+      <input type="text" id="shipping_address" placeholder="Numéro et rue" required>
+
+      <div class="row">
+        <div>
+          <label>Code postal</label>
+          <input type="text" id="shipping_zip" required>
+        </div>
+        <div>
+          <label>Ville</label>
+          <input type="text" id="shipping_city" required>
+        </div>
+      </div>
+
+      <label>Téléphone</label>
+      <input type="tel" id="phone" required>
+
+      <button type="submit">Confirmer ma livraison</button>
+      <p class="error-msg" id="error-msg">Une erreur est survenue, veuillez réessayer.</p>
+    </form>
+  </div>
+
+  <div class="card success" id="success-card">
+    <div style="text-align:center">
+      <h2>✓ Livraison confirmée</h2>
+      <p>Votre colis sera expédié sous 2-3 jours ouvrés. Merci !</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const orderRef = urlParams.get('ref');
+document.getElementById('ref-display').textContent = orderRef || '—';
+
+document.getElementById('livraison-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const errorMsg = document.getElementById('error-msg');
+  errorMsg.style.display = 'none';
+
+  fetch('https://n8n.wtng.online/webhook/denich-update-shipping', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      order_ref: orderRef,
+      customer_name: document.getElementById('customer_name').value,
+      shipping_address: document.getElementById('shipping_address').value,
+      shipping_zip: document.getElementById('shipping_zip').value,
+      shipping_city: document.getElementById('shipping_city').value,
+      phone: document.getElementById('phone').value
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('form-card').style.display = 'none';
+    document.getElementById('success-card').style.display = 'block';
+  })
+  .catch(() => {
+    errorMsg.style.display = 'block';
+  });
+});
+</script>
+
+</body>
+</html>
