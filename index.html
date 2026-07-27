@@ -99,7 +99,7 @@ footer .brand{font-size:16px}
       <h1>On fouille le marché.<br>Vous gardez <em>les pépites.</em></h1>
       <p class="hero-sub">Dénich'Deals repère les meilleurs produits au meilleur prix et vous les livre directement, sans jamais fouiller vous-même.</p>
       <div class="cta-row">
-        <button class="btn-primary" onclick="document.getElementById('trouvaille').scrollIntoView({behavior:'smooth'})">Voir la trouvaille du moment</button>
+        <button class="btn-primary" onclick="window.location.href='/checkout.html?product_id=1'">Voir la trouvaille du moment</button>
         <button class="btn-secondary">Comment ça marche</button>
       </div>
     </div>
@@ -154,26 +154,7 @@ footer .brand{font-size:16px}
       <div class="drop-badge">−50% cette semaine</div>
       <h3>Autonomie 30h, réduction de bruit active</h3>
       <p>La sélection qui ouvre Dénich'Deals : un son clair, un boîtier compact, et un prix qu'on ne trouve pas ailleurs sur ce modèle.</p>
-      <div style="margin-bottom:16px;text-align:left;">
-        <input type="text" id="buyer-name" placeholder="Nom et prénom" required style="width:100%;background:#2C1B33;border:1px solid rgba(245,240,234,0.15);border-radius:10px;padding:12px 14px;color:#F5F0EA;font-size:14px;margin-bottom:8px;font-family:'Karla',sans-serif;">
-        <input type="text" id="buyer-address" placeholder="Adresse (numéro et rue)" required style="width:100%;background:#2C1B33;border:1px solid rgba(245,240,234,0.15);border-radius:10px;padding:12px 14px;color:#F5F0EA;font-size:14px;margin-bottom:8px;font-family:'Karla',sans-serif;">
-        <div style="display:flex;gap:8px;margin-bottom:8px;">
-          <input type="text" id="buyer-zip" placeholder="Code postal" required style="flex:1;background:#2C1B33;border:1px solid rgba(245,240,234,0.15);border-radius:10px;padding:12px 14px;color:#F5F0EA;font-size:14px;font-family:'Karla',sans-serif;">
-          <input type="text" id="buyer-city" placeholder="Ville" required style="flex:1;background:#2C1B33;border:1px solid rgba(245,240,234,0.15);border-radius:10px;padding:12px 14px;color:#F5F0EA;font-size:14px;font-family:'Karla',sans-serif;">
-        </div>
-        <select id="buyer-country" required style="width:100%;background:#2C1B33;border:1px solid rgba(245,240,234,0.15);border-radius:10px;padding:12px 14px;color:#F5F0EA;font-size:14px;margin-bottom:8px;font-family:'Karla',sans-serif;">
-          <option value="France">France</option>
-          <option value="Belgique">Belgique</option>
-          <option value="Allemagne">Allemagne</option>
-          <option value="Italie">Italie</option>
-          <option value="Espagne">Espagne</option>
-          <option value="Luxembourg">Luxembourg</option>
-          <option value="Suisse">Suisse</option>
-        </select>
-        <input type="tel" id="buyer-phone" placeholder="Téléphone" required style="width:100%;background:#2C1B33;border:1px solid rgba(245,240,234,0.15);border-radius:10px;padding:12px 14px;color:#F5F0EA;font-size:14px;margin-bottom:8px;font-family:'Karla',sans-serif;">
-        <input type="email" id="buyer-email" placeholder="Email (confirmation de commande)" required style="width:100%;background:#2C1B33;border:1px solid rgba(245,240,234,0.15);border-radius:10px;padding:12px 14px;color:#F5F0EA;font-size:14px;font-family:'Karla',sans-serif;">
-      </div>
-      <button class="btn-primary" onclick="validateAndBuy(1)">Je le veux</button>
+      <button class="btn-primary" onclick="window.location.href='/checkout.html?product_id=1'">Je le veux</button>
     </div>
     <div class="drop-visual">🎧</div>
   </div>
@@ -185,47 +166,5 @@ footer .brand{font-size:16px}
   <div><a href="/legal.html" style="color:var(--grey);text-decoration:none;font-size:12px">Mentions légales · CGV · Confidentialité</a></div>
 </footer>
 
-<script>
-function validateAndBuy(productId) {
-  const fields = {
-    name:    document.getElementById('buyer-name').value.trim(),
-    address: document.getElementById('buyer-address').value.trim(),
-    zip:     document.getElementById('buyer-zip').value.trim(),
-    city:    document.getElementById('buyer-city').value.trim(),
-    phone:   document.getElementById('buyer-phone').value.trim(),
-    email:   document.getElementById('buyer-email').value.trim()
-  };
-
-  let valid = true;
-  for (const [key, val] of Object.entries(fields)) {
-    const el = document.getElementById('buyer-' + key);
-    if (!val) { el.style.borderColor = '#FF6B52'; valid = false; }
-    else el.style.borderColor = '';
-  }
-  if (!fields.email.includes('@')) {
-    document.getElementById('buyer-email').style.borderColor = '#FF6B52';
-    valid = false;
-  }
-  if (!valid) return;
-
-  fetch('https://n8n.wtng.online/webhook/denich-create-payment', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      product_id: productId,
-      customer_name: fields.name,
-      shipping_address: fields.address,
-      shipping_zip: fields.zip,
-      shipping_city: fields.city,
-      shipping_country: document.getElementById('buyer-country').value,
-      phone: fields.phone,
-      email: fields.email
-    })
-  })
-  .then(r => r.json())
-  .then(data => { window.location.href = data.checkout_url; })
-  .catch(() => alert('Une erreur est survenue, veuillez réessayer.'));
-}
-</script>
 </body>
 </html>

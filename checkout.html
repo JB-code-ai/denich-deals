@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commander — Dénich'Deals</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#221527; --bg2:#2C1B33; --gold:#E8A63D; --coral:#FF6B52;
+  --cream:#F5F0EA; --grey:#B8A9C0; --line:rgba(245,240,234,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--cream);min-height:100vh;display:flex;flex-direction:column}
+h1,h2,.brand{font-family:'Fredoka',sans-serif}
+
+nav{padding:20px 6%;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:20px;font-weight:700}
+.brand span{color:var(--gold)}
+.back-link{color:var(--grey);text-decoration:none;font-size:14px}
+
+/* Indicateur d'etapes */
+.progress{display:flex;gap:8px;padding:24px 6% 0;max-width:520px;margin:0 auto;width:100%}
+.progress-step{flex:1;height:3px;background:var(--line);border-radius:2px;overflow:hidden}
+.progress-step.active{background:var(--gold)}
+
+.wrap{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:30px 6% 60px}
+.card{max-width:480px;width:100%}
+
+.step{display:none}
+.step.visible{display:block}
+
+.step-title{font-size:24px;font-weight:700;margin-bottom:6px}
+.step-subtitle{color:var(--grey);font-size:14px;margin-bottom:28px}
+
+label{display:block;font-size:13px;color:var(--grey);margin-bottom:6px;margin-top:14px}
+input,select{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:13px 14px;color:var(--cream);font-size:15px;font-family:'Karla',sans-serif}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.row{display:flex;gap:12px}
+.row > div{flex:1}
+
+button{width:100%;margin-top:28px;background:var(--gold);color:var(--bg);border:none;padding:15px;border-radius:12px;font-weight:700;font-size:15px;font-family:'Fredoka',sans-serif;cursor:pointer}
+button:hover{transform:translateY(-1px)}
+.error-msg{color:var(--coral);font-size:13px;margin-top:10px;display:none}
+
+/* Recap etape 2 */
+.recap-box{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:24px}
+.recap-row{display:flex;justify-content:space-between;padding:10px 0;font-size:14px;border-bottom:1px solid var(--line)}
+.recap-row:last-child{border-bottom:none}
+.recap-row.total{padding-top:14px;font-size:17px;font-weight:700}
+.recap-row .label{color:var(--grey)}
+.recap-row.total .label{color:var(--cream)}
+.recap-row .value{color:var(--cream);font-weight:600}
+.recap-row.total .value{color:var(--gold)}
+
+.delivery-summary{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:24px;font-size:13px;color:var(--grey);line-height:1.6}
+.delivery-summary strong{color:var(--cream)}
+.edit-link{color:var(--gold);font-size:13px;text-decoration:none;display:inline-block;margin-top:8px}
+
+.loading{text-align:center;padding:20px;color:var(--grey);font-size:14px;display:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">Dénich'<span>Deals</span></div>
+  <a href="/" class="back-link">← Retour</a>
+</nav>
+
+<div class="progress">
+  <div class="progress-step active" id="progress-1"></div>
+  <div class="progress-step" id="progress-2"></div>
+</div>
+
+<div class="wrap">
+  <div class="card">
+
+    <!-- ETAPE 1 : Livraison -->
+    <div class="step visible" id="step-1">
+      <h1 class="step-title">Où livrer votre commande ?</h1>
+      <p class="step-subtitle">On calcule le frais de port juste après.</p>
+
+      <form id="delivery-form">
+        <label>Nom et prénom</label>
+        <input type="text" id="d-name" required>
+
+        <label>Adresse</label>
+        <input type="text" id="d-address" placeholder="Numéro et rue" required>
+
+        <div class="row">
+          <div>
+            <label>Code postal</label>
+            <input type="text" id="d-zip" required>
+          </div>
+          <div>
+            <label>Ville</label>
+            <input type="text" id="d-city" required>
+          </div>
+        </div>
+
+        <label>Pays</label>
+        <select id="d-country" required>
+          <option value="France">France</option>
+          <option value="Belgique">Belgique</option>
+          <option value="Allemagne">Allemagne</option>
+          <option value="Italie">Italie</option>
+          <option value="Espagne">Espagne</option>
+          <option value="Luxembourg">Luxembourg</option>
+          <option value="Suisse">Suisse</option>
+        </select>
+
+        <label>Téléphone</label>
+        <input type="tel" id="d-phone" required>
+
+        <label>Email</label>
+        <input type="email" id="d-email" placeholder="Pour votre confirmation" required>
+
+        <button type="submit">Voir le prix total</button>
+        <p class="error-msg" id="step1-error">Merci de remplir tous les champs correctement.</p>
+      </form>
+      <div class="loading" id="step1-loading">Calcul du frais de port...</div>
+    </div>
+
+    <!-- ETAPE 2 : Recapitulatif + paiement -->
+    <div class="step" id="step-2">
+      <h1 class="step-title">Récapitulatif de votre commande</h1>
+      <p class="step-subtitle">Vérifiez tout avant de payer.</p>
+
+      <div class="recap-box">
+        <div class="recap-row">
+          <span class="label" id="recap-product-name">Produit</span>
+          <span class="value" id="recap-product-price">—</span>
+        </div>
+        <div class="recap-row">
+          <span class="label">Frais de port</span>
+          <span class="value" id="recap-shipping">—</span>
+        </div>
+        <div class="recap-row total">
+          <span class="label">Total à payer</span>
+          <span class="value" id="recap-total">—</span>
+        </div>
+      </div>
+
+      <div class="delivery-summary" id="delivery-summary"></div>
+      <a href="#" class="edit-link" id="edit-delivery">← Modifier l'adresse</a>
+
+      <button type="button" id="pay-button">Payer maintenant</button>
+      <p class="error-msg" id="step2-error">Une erreur est survenue, veuillez réessayer.</p>
+      <div class="loading" id="step2-loading">Redirection vers le paiement...</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('product_id') || '1';
+
+let deliveryData = {};
+
+function goToStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('visible'));
+  document.getElementById('step-' + n).classList.add('visible');
+  document.getElementById('progress-1').classList.toggle('active', n >= 1);
+  document.getElementById('progress-2').classList.toggle('active', n >= 2);
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('delivery-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const error = document.getElementById('step1-error');
+  error.style.display = 'none';
+
+  deliveryData = {
+    customer_name: document.getElementById('d-name').value.trim(),
+    shipping_address: document.getElementById('d-address').value.trim(),
+    shipping_zip: document.getElementById('d-zip').value.trim(),
+    shipping_city: document.getElementById('d-city').value.trim(),
+    shipping_country: document.getElementById('d-country').value,
+    phone: document.getElementById('d-phone').value.trim(),
+    email: document.getElementById('d-email').value.trim()
+  };
+
+  for (const val of Object.values(deliveryData)) {
+    if (!val) { error.style.display = 'block'; return; }
+  }
+  if (!deliveryData.email.includes('@')) { error.style.display = 'block'; return; }
+
+  document.getElementById('step1-loading').style.display = 'block';
+
+  fetch('https://n8n.wtng.online/webhook/denich-calculate-price', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ product_id: productId, shipping_country: deliveryData.shipping_country })
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('step1-loading').style.display = 'none';
+    document.getElementById('recap-product-name').textContent = data.product_name;
+    document.getElementById('recap-product-price').textContent = data.product_price + ' €';
+    document.getElementById('recap-shipping').textContent = data.shipping_cost + ' €';
+    document.getElementById('recap-total').textContent = data.total + ' €';
+    document.getElementById('delivery-summary').innerHTML =
+      '<strong>' + deliveryData.customer_name + '</strong><br>' +
+      deliveryData.shipping_address + '<br>' +
+      deliveryData.shipping_zip + ' ' + deliveryData.shipping_city + ', ' + deliveryData.shipping_country;
+    goToStep(2);
+  })
+  .catch(() => {
+    document.getElementById('step1-loading').style.display = 'none';
+    error.textContent = 'Impossible de calculer le prix, veuillez réessayer.';
+    error.style.display = 'block';
+  });
+});
+
+document.getElementById('edit-delivery').addEventListener('click', function(e) {
+  e.preventDefault();
+  goToStep(1);
+});
+
+document.getElementById('pay-button').addEventListener('click', function() {
+  const error = document.getElementById('step2-error');
+  error.style.display = 'none';
+  document.getElementById('step2-loading').style.display = 'block';
+  document.getElementById('pay-button').disabled = true;
+
+  fetch('https://n8n.wtng.online/webhook/denich-create-payment', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ product_id: productId, ...deliveryData })
+  })
+  .then(r => r.json())
+  .then(data => window.location.href = data.checkout_url)
+  .catch(() => {
+    document.getElementById('step2-loading').style.display = 'none';
+    document.getElementById('pay-button').disabled = false;
+    error.style.display = 'block';
+  });
+});
+</script>
+
+</body>
+</html>
