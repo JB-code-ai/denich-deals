@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Détail produit — Dénich'Deals</title>
+<style>
+body{font-family:sans-serif; background:#221527; color:#F5F0EA; margin:0; padding:0;}
+nav{padding:20px 6%; border-bottom:1px solid rgba(245,240,234,0.1); display:flex; justify-content:space-between;}
+.brand{font-weight:700; font-size:20px;}
+.brand span{color:#E8A63D;}
+a{color:#B8A9C0; text-decoration:none;}
+.wrap{max-width:700px; margin:0 auto; padding:50px 6%;}
+.product-emoji{font-size:100px; text-align:center; margin-bottom:20px;}
+h1{font-size:28px; margin-bottom:10px;}
+.price-row{display:flex; align-items:center; gap:12px; margin-bottom:20px;}
+.price{font-size:28px; font-weight:700; color:#FF6B52;}
+.old-price{text-decoration:line-through; color:#B8A9C0; font-size:16px;}
+.description{color:#B8A9C0; line-height:1.6; margin-bottom:30px;}
+.features{background:#2C1B33; border-radius:12px; padding:20px; margin-bottom:30px;}
+.features li{margin-bottom:8px; color:#B8A9C0;}
+button{width:100%; background:#E8A63D; color:#221527; border:none; padding:16px; border-radius:10px; font-weight:700; font-size:16px; cursor:pointer;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">Dénich'<span>Deals</span></div>
+  <a href="/">← Retour</a>
+</nav>
+
+<div class="wrap">
+  <div class="product-emoji" id="product-emoji">🎧</div>
+  <h1 id="product-name">Chargement...</h1>
+  <div class="price-row">
+    <span class="price" id="product-price">—</span>
+    <span class="old-price" id="product-old-price"></span>
+  </div>
+  <p class="description" id="product-description"></p>
+
+  <div class="features">
+    <ul>
+      <li>Autonomie 30h</li>
+      <li>Réduction de bruit active</li>
+      <li>Livraison rapide, suivi inclus</li>
+      <li>Retour gratuit sous 14 jours</li>
+    </ul>
+  </div>
+
+  <button id="buy-btn">Acheter maintenant</button>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('id') || '1';
+
+fetch('https://n8n.wtng.online/webhook/denich-calculate-price', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({ product_id: productId, shipping_country: 'France' })
+})
+.then(r => r.json())
+.then(data => {
+  document.getElementById('product-name').textContent = data.product_name;
+  document.getElementById('product-price').textContent = data.product_price + ' €';
+  document.getElementById('product-description').textContent = 'Autonomie 30h, réduction de bruit active. La sélection qui ouvre Dénich\'Deals.';
+})
+.catch(() => {
+  document.getElementById('product-name').textContent = 'Produit introuvable';
+});
+
+document.getElementById('buy-btn').addEventListener('click', function() {
+  window.location.href = '/checkout.html?product_id=' + productId;
+});
+</script>
+
+</body>
+</html>
