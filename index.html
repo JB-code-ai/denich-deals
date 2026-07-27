@@ -99,9 +99,6 @@ footer .brand{font-size:16px}
       <h1>On fouille le marché.<br>Vous gardez <em>les pépites.</em></h1>
       <p class="hero-sub">Dénich'Deals repère les meilleurs produits au meilleur prix et vous les livre directement, sans jamais fouiller vous-même.</p>
       <div class="cta-row">
-        <div style="margin-bottom:12px;">
-          <input type="email" id="buyer-email" placeholder="Votre email (pour la confirmation de commande)" required style="width:100%;background:#2C1B33;border:1px solid rgba(245,240,234,0.15);border-radius:10px;padding:13px 16px;color:#F5F0EA;font-size:14px;font-family:'Karla',sans-serif;margin-bottom:10px;">
-        </div>
         <button class="btn-primary" onclick="acheter()">Voir la trouvaille du moment</button>
         <button class="btn-secondary">Comment ça marche</button>
       </div>
@@ -157,9 +154,6 @@ footer .brand{font-size:16px}
       <div class="drop-badge">−50% cette semaine</div>
       <h3>Autonomie 30h, réduction de bruit active</h3>
       <p>La sélection qui ouvre Dénich'Deals : un son clair, un boîtier compact, et un prix qu'on ne trouve pas ailleurs sur ce modèle.</p>
-      <div style="margin-bottom:12px;">
-        <input type="email" id="buyer-email-drop" placeholder="Votre email (pour la confirmation de commande)" required style="width:100%;background:#2C1B33;border:1px solid rgba(245,240,234,0.15);border-radius:10px;padding:13px 16px;color:#F5F0EA;font-size:14px;font-family:'Karla',sans-serif;margin-bottom:10px;">
-      </div>
       <button class="btn-primary" onclick="acheter('drop')">Je le veux</button>
     </div>
     <div class="drop-visual">🎧</div>
@@ -174,17 +168,6 @@ footer .brand{font-size:16px}
 
 <script>
 function acheter(source) {
-  const emailId = source === 'drop' ? 'buyer-email-drop' : 'buyer-email';
-  const emailInput = document.getElementById(emailId);
-  const email = emailInput.value.trim();
-
-  if (!email || !email.includes('@')) {
-    emailInput.style.borderColor = '#FF6B52';
-    emailInput.focus();
-    return;
-  }
-  emailInput.style.borderColor = '';
-
   fetch('https://n8n.wtng.online/webhook/denich-create-payment', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -192,7 +175,7 @@ function acheter(source) {
       product_id: 1,
       customer_name: null,
       phone: null,
-      email: email
+      email: null
     })
   })
   .then(r => r.json())
