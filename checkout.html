@@ -227,7 +227,7 @@ document.getElementById('pay-button').addEventListener('click', function() {
   fetch('https://n8n.wtng.online/webhook/denich-create-payment', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ product_id: productId, ...deliveryData })
+    body: JSON.stringify({ product_id: productId, ...deliveryData, ref_code: localStorage.getItem('denich_ref_code') || null })
   })
   .then(r => r.json())
   .then(data => window.location.href = data.checkout_url)

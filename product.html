@@ -54,6 +54,10 @@ button{width:100%; background:#E8A63D; color:#221527; border:none; padding:16px;
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('id') || '1';
 
+// Capture ref_code affilié
+const _rc = urlParams.get('ref');
+if (_rc) localStorage.setItem('denich_ref_code', _rc);
+
 fetch('https://n8n.wtng.online/webhook/denich-calculate-price', {
   method: 'POST',
   headers: {'Content-Type': 'application/json'},

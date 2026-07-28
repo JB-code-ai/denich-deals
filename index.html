@@ -166,5 +166,11 @@ footer .brand{font-size:16px}
   <div><a href="/legal.html" style="color:var(--grey);text-decoration:none;font-size:12px">Mentions légales · CGV · Confidentialité</a></div>
 </footer>
 
+<script>
+// Capture ref_code affilié
+const _rp = new URLSearchParams(window.location.search);
+const _rc = _rp.get('ref');
+if (_rc) localStorage.setItem('denich_ref_code', _rc);
+</script>
 </body>
 </html>
