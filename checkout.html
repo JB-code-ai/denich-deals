@@ -156,6 +156,10 @@ button:hover{transform:translateY(-1px)}
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get('product_id') || '1';
 
+// Capture ref_code affilié (si arrivée directe sur checkout avec ?ref=)
+const _rc = urlParams.get('ref');
+if (_rc) localStorage.setItem('denich_ref_code', _rc);
+
 let deliveryData = {};
 
 function goToStep(n) {
